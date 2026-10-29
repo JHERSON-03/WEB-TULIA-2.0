@@ -306,6 +306,7 @@ p { margin: 0; }
 .cabecera__volver { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .cabecera__volver .icono { width: 16px; height: 16px; transition: transform .3s var(--salida); }
 .cabecera__volver:hover .icono { transform: translate3d(-3px, 0, 0); }
+.cabecera__volver-corto { display: none; }
 .menu a[aria-current="page"] { color: var(--vino); }
 .menu a[aria-current="page"]::after { transform: scaleX(1); }
 .cabecera__fila { display: flex; align-items: center; gap: 32px; height: var(--alto-cabecera); }
@@ -536,7 +537,7 @@ p { margin: 0; }
 
 /* --- Secciones --- */
 .seccion { padding: 112px 0; }
-.seccion--papel { background: var(--crema); }
+.seccion--papel { --fondo-seccion: var(--crema); background: var(--crema); }
 .seccion--vino { background: var(--vino); color: var(--crema); }
 .seccion--vino .cabeza-centro > p:last-child { color: rgba(246, 241, 234, .75); }
 
@@ -668,6 +669,69 @@ p { margin: 0; }
 .filtros:not(.filtros--medidos) button[aria-selected="true"] { background: var(--vino); }
 
 .catalogo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+
+/*
+ * --- Flechas flotantes que invitan a deslizar ---
+ * main.js marca la caja con deslizable--izq / deslizable--der cuando hay más contenido
+ * hacia ese lado; al llegar al final, la flecha de ese lado se va.
+ */
+.deslizable { position: relative; }
+.deslizable--filtros { margin-bottom: 32px; }
+.deslizable--filtros .filtros { margin-bottom: 0; }
+.pista-deslizar {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid rgba(184, 137, 59, .6);
+  border-radius: 50%;
+  background: rgba(254, 249, 242, .92);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 16px -6px rgba(74, 16, 25, .4);
+  color: var(--vino);
+  cursor: pointer;
+  translate: 0 -50%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s, visibility .3s, transform .2s var(--salida);
+}
+.pista-deslizar:active { transform: scale(.88); }
+.pista-deslizar .icono { width: 16px; height: 16px; }
+.pista-deslizar--izq { left: 6px; }
+.pista-deslizar--der { right: 6px; }
+.pista-deslizar--izq .icono { animation: empujar-izq 1.4s ease-in-out infinite; }
+.pista-deslizar--der .icono { animation: empujar-der 1.4s ease-in-out infinite; }
+.deslizable--izq > .pista-deslizar--izq,
+.deslizable--der > .pista-deslizar--der { opacity: 1; visibility: visible; }
+@keyframes empujar-izq { 50% { transform: translate3d(-4px, 0, 0); } }
+@keyframes empujar-der { 50% { transform: translate3d(4px, 0, 0); } }
+
+/* En la fila de categorías la orilla se desvanece detrás de la flecha */
+.deslizable--filtros::before,
+.deslizable--filtros::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 64px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+}
+.deslizable--filtros::before { left: 0; background: linear-gradient(to left, transparent, var(--fondo-seccion, var(--fondo)) 70%); }
+.deslizable--filtros::after { right: 0; background: linear-gradient(to right, transparent, var(--fondo-seccion, var(--fondo)) 70%); }
+.deslizable--izq.deslizable--filtros::before,
+.deslizable--der.deslizable--filtros::after { opacity: 1; }
+
+/* En el carrusel la flecha es más grande y va a la altura de la foto */
+.carrusel > .pista-deslizar { top: 204px; width: 42px; height: 42px; }
+.carrusel > .pista-deslizar .icono { width: 18px; height: 18px; }
 
 /* --- Carrusel de una fila: se desliza con el dedo de forma nativa (scroll + snap) --- */
 .carrusel { position: relative; }
@@ -1261,21 +1325,27 @@ p { margin: 0; }
   .carrusel__flechas { display: none; }
   .cabeza-catalogo .boton { width: 100%; }
   /* Las categorías van en una sola fila que se desliza con el dedo, de borde a borde */
+  .deslizable--filtros { margin-inline: calc(-1 * var(--gutter)); }
   .filtros {
     flex-wrap: nowrap;
     overflow-x: auto;
-    margin-inline: calc(-1 * var(--gutter));
     padding: 2px var(--gutter);
     scrollbar-width: none;
   }
   .filtros::-webkit-scrollbar { display: none; }
   .filtros button { flex: none; }
-  .cabecera__volver .cabecera__volver-largo { display: none; }
+  .cabecera__volver-largo { display: none; }
+  .cabecera__volver-corto { display: inline; }
   .presentaciones { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .aviso-edad__botones { grid-template-columns: 1fr; }
   .mayoristas { padding: 24px; }
   .mayoristas .boton { width: 100%; }
   .whatsapp-flotante__globo { display: none; }
+}
+
+/* En pantallas grandes el carrusel ya tiene sus flechas debajo */
+@media (min-width: 761px) {
+  .carrusel > .pista-deslizar { display: none; }
 }
 
 /* Menú desplegable cuando los enlaces ya no caben en una línea */

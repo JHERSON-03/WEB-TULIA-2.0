@@ -182,9 +182,15 @@
             <svg class="icono" aria-hidden="true"><use href="#i-derecha"/></svg>
           </a>
         </div>
-        <div class="filtros revelar" id="filtros" role="tablist" aria-label="Filtrar por categoría"></div>
-        <div class="carrusel" id="carrusel" role="region" aria-roledescription="carrusel" aria-label="Productos D'Tulia">
+        <div class="deslizable deslizable--filtros">
+          <div class="filtros revelar" id="filtros" role="tablist" aria-label="Filtrar por categoría"></div>
+          <button type="button" class="pista-deslizar pista-deslizar--izq" data-direccion="-1" aria-label="Ver categorías anteriores"><svg class="icono" aria-hidden="true"><use href="#i-izquierda"/></svg></button>
+          <button type="button" class="pista-deslizar pista-deslizar--der" data-direccion="1" aria-label="Ver más categorías"><svg class="icono" aria-hidden="true"><use href="#i-derecha"/></svg></button>
+        </div>
+        <div class="carrusel deslizable" id="carrusel" role="region" aria-roledescription="carrusel" aria-label="Productos D'Tulia">
           <div class="catalogo catalogo--carrusel" id="catalogo" tabindex="0"></div>
+          <button type="button" class="pista-deslizar pista-deslizar--izq" data-direccion="-1" aria-label="Productos anteriores"><svg class="icono" aria-hidden="true"><use href="#i-izquierda"/></svg></button>
+          <button type="button" class="pista-deslizar pista-deslizar--der" data-direccion="1" aria-label="Ver más productos"><svg class="icono" aria-hidden="true"><use href="#i-derecha"/></svg></button>
         </div>
         <div class="carrusel__controles">
           <div class="carrusel__barra" aria-hidden="true"><span class="carrusel__avance"></span></div>

@@ -62,7 +62,8 @@
       </nav>
       <a class="boton boton--fantasma boton--pequeno cabecera__volver" href="index.html">
         <svg class="icono" aria-hidden="true"><use href="#i-izquierda"/></svg>
-        <span><span class="cabecera__volver-largo">Volver al </span>inicio</span>
+        <span class="cabecera__volver-largo">Volver al inicio</span>
+        <span class="cabecera__volver-corto">Inicio</span>
       </a>
       <button class="menu-boton" id="menu-boton" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu">
         <span></span><span></span>
@@ -86,7 +87,11 @@
         </label>
         <p class="contador" id="contador" aria-live="polite"></p>
       </div>
-      <div class="filtros revelar" id="filtros" role="tablist" aria-label="Filtrar por categoría"></div>
+      <div class="deslizable deslizable--filtros">
+        <div class="filtros revelar" id="filtros" role="tablist" aria-label="Filtrar por categoría"></div>
+        <button type="button" class="pista-deslizar pista-deslizar--izq" data-direccion="-1" aria-label="Ver categorías anteriores"><svg class="icono" aria-hidden="true"><use href="#i-izquierda"/></svg></button>
+        <button type="button" class="pista-deslizar pista-deslizar--der" data-direccion="1" aria-label="Ver más categorías"><svg class="icono" aria-hidden="true"><use href="#i-derecha"/></svg></button>
+      </div>
 
       <div class="catalogo" id="catalogo"></div>
       <div class="sin-resultados" id="sin-resultados" hidden>

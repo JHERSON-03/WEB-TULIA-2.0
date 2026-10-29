@@ -268,6 +268,25 @@ function crearTarjeta(producto, indice) {
 }
 
 /*
+ * --- Flechas flotantes de las filas que se deslizan ---
+ * Marca la caja .deslizable según haya más contenido a la izquierda o a la derecha,
+ * y al tocar una flecha llama a alTocar(-1 | 1). Devuelve la función que recalcula.
+ */
+function vigilarDeslizable(fila, alTocar) {
+  const caja = fila.closest(".deslizable");
+  const actualizar = () => {
+    caja.classList.toggle("deslizable--izq", fila.scrollLeft > 4);
+    caja.classList.toggle("deslizable--der", fila.scrollLeft + fila.clientWidth < fila.scrollWidth - 4);
+  };
+  caja.querySelectorAll(":scope > .pista-deslizar").forEach((flecha) =>
+    flecha.addEventListener("click", () => alTocar(Number(flecha.dataset.direccion))));
+  fila.addEventListener("scroll", actualizar, { passive: true });
+  window.addEventListener("resize", actualizar);
+  actualizar();
+  return actualizar;
+}
+
+/*
  * --- Carrusel de la portada ---
  * El deslizamiento es el scroll nativo de la pista (con el dedo funciona solo);
  * aquí se suman el arrastre con mouse, las flechas, la barra de avance y el auto-play.
@@ -286,7 +305,14 @@ function crearCarrusel(pista) {
   const alInicio = () => pista.scrollLeft <= 4;
   const alFinal = () => pista.scrollLeft + pista.clientWidth >= pista.scrollWidth - 4;
 
+  // En celular, las flechas flotantes sobre las tarjetas avisan que hay más productos
+  const actualizarFlechas = vigilarDeslizable(pista, (direccion) => {
+    interaccion();
+    mover(direccion);
+  });
+
   const actualizar = () => {
+    actualizarFlechas();
     const fraccion = pista.scrollWidth > 0 ? Math.min(pista.clientWidth / pista.scrollWidth, 1) : 1;
     avance.style.setProperty("--ancho-avance", `${fraccion * 100}%`);
     avance.style.setProperty("--paso-avance", `${(pista.scrollLeft / pista.clientWidth) * 100}%`);
@@ -410,7 +436,13 @@ function iniciarCatalogo() {
     filtros.classList.add("filtros--medidos");
   };
   moverIndicador();
-  document.fonts?.ready.then(moverIndicador);
+  // Cuando las categorías no caben (en celular), las flechas avisan que hay más
+  const actualizarFlechasFiltros = vigilarDeslizable(filtros, (direccion) =>
+    filtros.scrollBy({ left: direccion * filtros.clientWidth * 0.6, behavior: SIN_MOVIMIENTO ? "auto" : "smooth" }));
+  document.fonts?.ready.then(() => {
+    moverIndicador();
+    actualizarFlechasFiltros();
+  });
   window.addEventListener("resize", moverIndicador);
 
   const mostrar = (animar) => {
@@ -533,7 +565,7 @@ function iniciarRevelado() {
     elementos.forEach(terminarRevelado);
     return;
   }
-  const observador = new IntersectionObserver((entradas) => {
+  const alEntrar = (entradas, observador) => {
     // Las tarjetas que entran juntas aparecen en cascada, 120 ms una tras otra,
     // en orden de lectura (de arriba abajo y de izquierda a derecha)
     let orden = 0;
@@ -548,8 +580,11 @@ function iniciarRevelado() {
         target.classList.add("revelar--visible");
         setTimeout(() => terminarRevelado(target), retraso + 1900);
       });
-  }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
-  elementos.forEach((elemento) => observador.observe(elemento));
+  };
+  const bloques = new IntersectionObserver(alEntrar, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+  // Las tarjetas aparecen apenas asoman: así la siguiente del carrusel se ve en el borde
+  const tarjetas = new IntersectionObserver(alEntrar, { threshold: 0, rootMargin: "0px 0px -40px 0px" });
+  elementos.forEach((elemento) => (elemento.classList.contains("revelar--tarjeta") ? tarjetas : bloques).observe(elemento));
 }
 
 iniciarAvisoEdad();
