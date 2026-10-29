@@ -8,7 +8,7 @@
 
 const NEGOCIO = {
   // Número con código de país, sin "+" ni espacios (Perú = 51)
-  whatsapp: "51900000000",
+  whatsapp: "51944660904",
   mensajeGeneral: "Hola D'Tulia, quiero hacer un pedido.",
   direccion: "Trujillo, La Libertad",
   horario: "Lunes a sábado · 9:00 a. m. – 7:00 p. m.",
