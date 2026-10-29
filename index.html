@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>D'Tulia · Vinos de fruta de producción propia en Trujillo</title>
+  <meta name="description" content="Vino Rosé, de Maracuyá, de Durazno y de Piña, elaborados y embotellados en Trujillo. Pide por unidad o por caja directamente por WhatsApp.">
+  <meta name="theme-color" content="#fef9f2">
+
+  <!-- Vista previa al compartir el enlace (WhatsApp, Facebook). Al publicar, usar la URL completa de la imagen -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="D'Tulia · Vinos de fruta de producción propia">
+  <meta property="og:description" content="Rosé, maracuyá, durazno y piña, hechos en Trujillo. Pide por WhatsApp.">
+  <meta property="og:image" content="img/logo.jpg">
+  <meta property="og:locale" content="es_PE">
+
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+
+  <script src="js/datos.js" defer></script>
+  <script src="js/botellas.js" defer></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+
+  <!-- Aviso de mayoría de edad (Ley 28681) -->
+  <div class="aviso-edad" id="aviso-edad" role="dialog" aria-modal="true" aria-labelledby="aviso-titulo" hidden>
+    <div class="aviso-edad__caja">
+      <img class="logo logo--aviso" src="img/logo.jpg" alt="D'Tulia" width="96" height="96">
+      <p class="etiqueta etiqueta--oro">Bodega artesanal · Trujillo</p>
+      <h2 id="aviso-titulo">¿Eres mayor de 18 años?</h2>
+      <p>Bienvenido a D'Tulia. Para ver nuestros vinos de fruta, confirma que tienes la edad legal para consumir bebidas alcohólicas.</p>
+      <div class="aviso-edad__botones">
+        <button class="boton boton--oro" id="edad-si">Sí, soy mayor de edad</button>
+        <button class="boton boton--fantasma-claro" id="edad-no">No tengo 18</button>
+      </div>
+      <p class="aviso-edad__rechazo" id="edad-rechazo" hidden>Vuelve cuando cumplas 18. ¡Te esperamos!</p>
+      <p class="aviso-edad__nota">
+        <svg class="icono" aria-hidden="true"><use href="#i-escudo"/></svg>
+        El consumo responsable es nuestra prioridad
+      </p>
+    </div>
+  </div>
+
+  <header class="cabecera" id="cabecera">
+    <div class="contenedor cabecera__fila">
+      <a href="#inicio" class="marca" aria-label="D'Tulia, inicio">
+        <img class="logo" src="img/logo.jpg" alt="" width="44" height="44">
+        D'Tulia
+      </a>
+      <nav class="menu" id="menu" aria-label="Principal">
+        <a href="#nosotros">Nosotros</a>
+        <a href="#productos">Productos</a>
+        <a href="#personalizadas">Personalizados</a>
+        <a href="#como-pedir">Cómo pedir</a>
+        <a href="#donde">Dónde estamos</a>
+        <a href="#preguntas">Preguntas</a>
+      </nav>
+      <a class="boton boton--bronce boton--pequeno cabecera__cta" data-whatsapp href="#">Pedir</a>
+      <button class="menu-boton" id="menu-boton" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Portada -->
+    <section class="portada" id="inicio">
+      <div class="contenedor portada__rejilla">
+        <div class="portada__texto">
+          <p class="pastilla"><span class="pastilla__punto"></span>Producción propia · Trujillo, Perú</p>
+          <h1>Vinos de fruta hechos <em>en casa</em>, para brindar en la tuya.</h1>
+          <p class="portada__bajada">Rosé, maracuyá, durazno y piña. Elaboramos, embotellamos y encajamos cada botella en nuestra propia fábrica, y de nuestro almacén en Trujillo van directo a tu mesa, tu bodega o tu celebración.</p>
+          <div class="portada__acciones">
+            <a href="#productos" class="boton">
+              Ver los vinos
+              <svg class="icono" aria-hidden="true"><use href="#i-abajo"/></svg>
+            </a>
+            <a href="#" class="boton boton--fantasma" data-whatsapp>
+              <span class="punto-vivo"></span>
+              Pedir por WhatsApp
+            </a>
+          </div>
+          <ul class="portada__datos">
+            <li><strong>4 sabores</strong>Rosé, maracuyá, durazno y piña</li>
+            <li><strong>5 formatos</strong>Desde la chata hasta 4 litros</li>
+            <li><strong>Envíos</strong>Delivery y otras ciudades</li>
+          </ul>
+        </div>
+
+        <figure class="portada__vitrina">
+          <div class="portada__fotos">
+            <img class="portada__foto portada__foto--izq" src="img/productos/maracuya.jpg" alt="Vino de Maracuyá D'Tulia" width="480" height="1200">
+            <img class="portada__foto portada__foto--der" src="img/productos/durazno.jpg" alt="Vino de Durazno D'Tulia" width="480" height="1200">
+            <img class="portada__foto portada__foto--centro" src="img/productos/rose.jpg" alt="Vino Rosé D'Tulia" width="480" height="1200">
+          </div>
+          <figcaption class="portada__leyenda">
+            <span class="etiqueta etiqueta--oro">Nuestra colección</span>
+            <em>Rosé, Maracuyá, Durazno &amp; Piña</em>
+          </figcaption>
+          <div class="sello" aria-hidden="true">
+            <span>Bodega</span>
+            <strong>Trujillo</strong>
+            <em>100%</em>
+            <span>artesanal</span>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Franja -->
+    <div class="franja" aria-hidden="true">
+      <div class="franja__pista">
+        <span>Rosé</span><span>Maracuyá</span><span>Durazno</span><span>Piña</span><span>Hecho en Trujillo</span><span>Por unidad o por caja</span>
+        <span>Rosé</span><span>Maracuyá</span><span>Durazno</span><span>Piña</span><span>Hecho en Trujillo</span><span>Por unidad o por caja</span>
+      </div>
+    </div>
+
+    <!-- Nosotros -->
+    <section class="seccion" id="nosotros">
+      <div class="contenedor">
+        <div class="cabeza-partida revelar">
+          <div>
+            <p class="etiqueta">01 · Nosotros</p>
+            <h2>Una fábrica pequeña, con <em>oficio de las grandes</em>.</h2>
+          </div>
+          <p>En D'Tulia no revendemos: producimos. Cada lote de vino sale de nuestra fábrica, pasa por nuestras manos y llega a nuestro almacén en Trujillo, desde donde lo despachamos a tiendas, bodegas y familias de todo el norte.</p>
+        </div>
+        <div class="nosotros">
+          <ol class="pasos-fabrica">
+            <li class="revelar">
+              <span class="pasos-fabrica__num">I.</span>
+              <div>
+                <h3>Elaboramos</h3>
+                <p>Recetas propias y fruta seleccionada. Fermentamos y reposamos sin apuros, en pequeños lotes, como se hace en casa.</p>
+              </div>
+            </li>
+            <li class="revelar">
+              <span class="pasos-fabrica__num">II.</span>
+              <div>
+                <h3>Embotellamos</h3>
+                <p>Llenamos y sellamos cada presentación en la fábrica, con control de cada lote antes de salir.</p>
+              </div>
+            </li>
+            <li class="revelar">
+              <span class="pasos-fabrica__num">III.</span>
+              <div>
+                <h3>Encajamos y enviamos</h3>
+                <p>Las cajas llegan a nuestro almacén en Trujillo y de ahí parten a tu casa, tu negocio o tu ciudad.</p>
+              </div>
+            </li>
+          </ol>
+          <figure class="nosotros__vitrina revelar">
+            <img src="img/productos/pina.jpg" alt="Vino de Piña D'Tulia" width="480" height="1200" loading="lazy">
+            <figcaption>
+              <span class="etiqueta etiqueta--oro">Hecho en Trujillo</span>
+              <em>De nuestra fábrica a tu copa</em>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Productos -->
+    <section class="seccion seccion--papel" id="productos">
+      <div class="contenedor">
+        <div class="cabeza-centro revelar">
+          <p class="etiqueta">02 · Productos</p>
+          <h2>Nuestra bodega</h2>
+          <p>Cuatro sabores nacidos de fruta de verdad. Elige el formato y el botón arma tu mensaje de WhatsApp para que solo tengas que enviarlo.</p>
+        </div>
+        <div class="filtros" id="filtros" role="tablist" aria-label="Filtrar por tipo"></div>
+        <div class="catalogo" id="catalogo"></div>
+      </div>
+    </section>
+
+    <!-- Presentaciones -->
+    <section class="seccion">
+      <div class="contenedor">
+        <div class="cabeza-centro revelar">
+          <p class="etiqueta">03 · Presentaciones</p>
+          <h2>Un tamaño para cada ocasión</h2>
+          <p>Desde el brindis personal hasta las grandes celebraciones. Todas se venden por unidad o por caja cerrada.</p>
+        </div>
+        <ul class="presentaciones" id="presentaciones"></ul>
+      </div>
+    </section>
+
+    <!-- Etiquetas personalizadas -->
+    <section class="seccion seccion--papel" id="personalizadas">
+      <div class="contenedor personalizadas">
+        <figure class="personalizadas__foto revelar">
+          <img src="img/etiquetas-huamachuco.jpg" alt="Vinos Rosé D'Tulia con etiquetas personalizadas por las fiestas de Huamachuco" width="332" height="362" loading="lazy">
+          <figcaption>
+            <span class="etiqueta etiqueta--oro">Hecho para Huamachuco</span>
+            <em>Rosé · Edición “Felices Fiestas”</em>
+          </figcaption>
+        </figure>
+
+        <div class="personalizadas__texto revelar">
+          <p class="etiqueta">04 · Etiquetas personalizadas</p>
+          <h2>Tu vino, con <em>tu propia etiqueta</em>.</h2>
+          <p class="personalizadas__bajada">Diseñamos etiquetas a la medida de tu celebración: el nombre de tu pueblo, tu fiesta, tu empresa o tu familia, en nuestras botellas de vino. Un recuerdo que se brinda y se guarda.</p>
+
+          <ul class="ocasiones" aria-label="Ocasiones">
+            <li>Fiestas patronales</li>
+            <li>Matrimonios</li>
+            <li>Aniversarios</li>
+            <li>Empresas y regalos corporativos</li>
+            <li>Promociones y graduaciones</li>
+          </ul>
+
+          <ol class="pasos-etiqueta">
+            <li><span>1</span><div><strong>Cuéntanos la ocasión</strong>Nombre, fecha, logo o la imagen que quieras mostrar.</div></li>
+            <li><span>2</span><div><strong>Diseñamos tu etiqueta</strong>Te enviamos la propuesta para que la apruebes.</div></li>
+            <li><span>3</span><div><strong>Embotellamos tu pedido</strong>Con el sabor y la presentación que elijas, listo para tu evento.</div></li>
+          </ol>
+
+          <div class="personalizadas__acciones">
+            <a href="#" class="boton" data-whatsapp data-mensaje="Hola D'Tulia, quiero cotizar vinos con etiqueta personalizada para mi evento.">
+              <svg class="icono" aria-hidden="true"><use href="#i-whatsapp"/></svg>
+              Cotizar mi etiqueta
+            </a>
+            <p>Consulta cantidades mínimas y tiempos de entrega.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cómo pedir -->
+    <section class="seccion seccion--vino" id="como-pedir">
+      <div class="contenedor">
+        <div class="cabeza-centro revelar">
+          <p class="etiqueta etiqueta--oro">05 · Cómo pedir</p>
+          <h2>Directo de la bodega a tu copa</h2>
+          <p>Pedir tu vino es simple, rápido y sin complicaciones.</p>
+        </div>
+        <ol class="pasos">
+          <li class="revelar">
+            <span class="pasos__num">1</span>
+            <h3>Elige tu sabor y formato</h3>
+            <p>Escoge entre Rosé, Maracuyá, Durazno o Piña, en botella suelta o por caja.</p>
+          </li>
+          <li class="revelar">
+            <span class="pasos__num">2</span>
+            <h3>Escríbenos al WhatsApp</h3>
+            <p>Te confirmamos precio, stock y forma de pago, y coordinamos la entrega.</p>
+          </li>
+          <li class="revelar">
+            <span class="pasos__num">3</span>
+            <h3>Recibe tu pedido</h3>
+            <p>Recoge en nuestro almacén, pide delivery en Trujillo o envío a tu ciudad.</p>
+          </li>
+        </ol>
+        <div class="mayoristas revelar">
+          <span class="mayoristas__icono" aria-hidden="true"><svg><use href="#i-tienda"/></svg></span>
+          <div class="mayoristas__texto">
+            <p class="etiqueta etiqueta--oro">Atención a negocios</p>
+            <h3>¿Tienes una bodega, restaurante o evento?</h3>
+            <p>Precios especiales por caja para revendedores y celebraciones.</p>
+          </div>
+          <a href="#" class="boton boton--oro" data-whatsapp data-mensaje="Hola D'Tulia, tengo un negocio y quiero información de precios por caja.">Quiero precios por caja</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dónde estamos -->
+    <section class="seccion" id="donde">
+      <div class="contenedor">
+        <div class="cabeza-centro revelar">
+          <p class="etiqueta">06 · Dónde estamos</p>
+          <h2>Desde Trujillo para todo el norte</h2>
+        </div>
+        <div class="donde">
+          <div class="contacto revelar">
+            <p class="etiqueta">Almacén principal</p>
+            <h3>D'Tulia · Trujillo</h3>
+            <p class="contacto__direccion" id="dato-direccion"></p>
+            <ul class="contacto__lista">
+              <li>
+                <svg class="icono" aria-hidden="true"><use href="#i-reloj"/></svg>
+                <div><strong>Horario de atención</strong><span id="dato-horario"></span></div>
+              </li>
+              <li>
+                <svg class="icono" aria-hidden="true"><use href="#i-camion"/></svg>
+                <div><strong>Envíos</strong><span>Delivery en Trujillo y envíos a otras ciudades</span></div>
+              </li>
+              <li>
+                <svg class="icono" aria-hidden="true"><use href="#i-telefono"/></svg>
+                <div><strong>Atención directa</strong><span><a href="#" data-whatsapp id="dato-whatsapp"></a> · pedidos por WhatsApp</span></div>
+              </li>
+            </ul>
+            <a href="#" class="boton boton--bronce boton--ancho" data-whatsapp data-mensaje="Hola D'Tulia, quiero coordinar el recojo o envío de un pedido.">Coordinar recojo o envío</a>
+          </div>
+          <div class="donde__mapa revelar">
+            <iframe id="mapa" title="Ubicación de D'Tulia en el mapa" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Preguntas -->
+    <section class="seccion seccion--papel" id="preguntas">
+      <div class="contenedor contenedor--angosto">
+        <div class="cabeza-centro revelar">
+          <p class="etiqueta">07 · Preguntas</p>
+          <h2>Preguntas frecuentes</h2>
+          <p>Todo lo que necesitas saber sobre nuestros vinos y su despacho.</p>
+        </div>
+        <div class="acordeon revelar">
+          <details>
+            <summary>¿Venden por unidad o solo por caja?</summary>
+            <p>Por las dos. Puedes pedir una sola botella o cajas completas. La caja trae 24 unidades en chata, 12 en 750 ml y 1 L, 9 en 2 L y 4 en 4 L.</p>
+          </details>
+          <details>
+            <summary>¿Hacen envíos fuera de Trujillo?</summary>
+            <p>Sí. Enviamos a otras ciudades por agencia. Escríbenos con tu ciudad y te cotizamos el envío.</p>
+          </details>
+          <details>
+            <summary>¿Qué formas de pago aceptan?</summary>
+            <p>Efectivo, transferencia y billeteras digitales. Te confirmamos las opciones al cerrar tu pedido por WhatsApp.</p>
+          </details>
+          <details>
+            <summary>¿Emiten boleta o factura?</summary>
+            <p>Sí, emitimos boleta y factura (con RUC) en cada compra.</p>
+          </details>
+          <details>
+            <summary>¿Atienden pedidos para eventos?</summary>
+            <p>Claro. Para matrimonios, cumpleaños o eventos de empresa armamos el pedido por cajas con precio especial.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor">
+      <div class="pie__fila">
+        <div class="pie__marca">
+          <img class="logo logo--pie" src="img/logo.jpg" alt="" width="64" height="64">
+          <div>
+            <span class="marca">D'Tulia <span class="pie__punto">•</span> Vinos de fruta</span>
+            <p class="pie__lema">Vinos de fruta de producción propia, nacidos bajo el sol de Trujillo, Perú.</p>
+          </div>
+        </div>
+        <div class="pie__derecha">
+          <nav class="pie__menu" aria-label="Secciones">
+            <a href="#nosotros">Nosotros</a>
+            <a href="#productos">Productos</a>
+            <a href="#personalizadas">Personalizados</a>
+            <a href="#como-pedir">Cómo pedir</a>
+            <a href="#donde">Dónde estamos</a>
+            <a href="#preguntas">Preguntas</a>
+          </nav>
+          <nav class="pie__redes" id="redes" aria-label="Redes sociales"></nav>
+        </div>
+      </div>
+      <p class="pie__legal">Tomar bebidas alcohólicas en exceso es dañino</p>
+      <div class="pie__base">
+        <p>© <span id="anio"></span> D'Tulia Vinos de Fruta · Trujillo, Perú.</p>
+        <p>Prohibida la venta de bebidas alcohólicas a menores de 18 años.</p>
+      </div>
+    </div>
+  </footer>
+
+  <a class="whatsapp-flotante" href="#" data-whatsapp aria-label="Escríbenos por WhatsApp">
+    <span class="whatsapp-flotante__globo"><span class="punto-vivo"></span>¡Pide tu vino aquí!</span>
+    <span class="whatsapp-flotante__boton"><svg aria-hidden="true"><use href="#i-whatsapp"/></svg></span>
+  </a>
+
+  <!-- Iconos -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-whatsapp" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2Zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.24-8.23 4.54 0 8.23 3.69 8.23 8.23 0 4.54-3.69 8.24-8.22 8.24Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.17.24-.64.8-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48a.92.92 0 0 0-.67.31c-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.57.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></symbol>
+    <symbol id="i-facebook" viewBox="0 0 24 24"><path fill="currentColor" d="M13.5 21v-7.5h2.53l.38-2.94H13.5V8.68c0-.85.24-1.43 1.46-1.43h1.56V4.62a21 21 0 0 0-2.27-.12c-2.25 0-3.79 1.37-3.79 3.9v2.16H7.92v2.94h2.54V21h3.04Z"/></symbol>
+    <symbol id="i-instagram" viewBox="0 0 24 24"><path fill="currentColor" d="M12 7.3a4.7 4.7 0 1 0 0 9.4 4.7 4.7 0 0 0 0-9.4Zm0 7.75a3.05 3.05 0 1 1 0-6.1 3.05 3.05 0 0 1 0 6.1Zm4.9-8.97a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2ZM21.95 8.1c-.05-1.1-.3-2.08-1.1-2.9-.8-.8-1.78-1.05-2.9-1.1C16.8 4.03 7.2 4.03 6.05 4.1c-1.1.05-2.08.3-2.9 1.1-.8.8-1.05 1.79-1.1 2.9-.07 1.15-.07 4.65 0 5.8.05 1.1.3 2.08 1.1 2.9.82.8 1.8 1.05 2.9 1.1 1.15.07 10.75.07 11.9 0 1.1-.05 2.08-.3 2.9-1.1.8-.82 1.05-1.8 1.1-2.9.07-1.15.07-4.64 0-5.8ZM20.1 15.4a2.4 2.4 0 0 1-1.35 1.35c-.94.37-3.16.29-4.2.29H9.45c-1.04 0-3.27.08-4.2-.29A2.4 2.4 0 0 1 3.9 15.4c-.37-.94-.29-3.16-.29-4.2s-.08-3.26.29-4.2A2.4 2.4 0 0 1 5.25 5.65c.94-.37 3.16-.29 4.2-.29h5.1c1.04 0 3.27-.08 4.2.29a2.4 2.4 0 0 1 1.35 1.35c.37.94.29 3.16.29 4.2s.08 3.26-.29 4.2Z"/></symbol>
+    <symbol id="i-tiktok" viewBox="0 0 24 24"><path fill="currentColor" d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5 2.6 2.6 0 0 1-2.6-2.6c0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48Z"/></symbol>
+    <symbol id="i-abajo" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m-6-6 6 6 6-6"/></symbol>
+    <symbol id="i-escudo" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M12 3 5 6v5c0 4.4 3 8.3 7 10 4-1.7 7-5.6 7-10V6l-7-3Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-reloj" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-camion" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 6.5h11v9H3zM14 9.5h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.8" fill="var(--papel, #fff)" stroke="currentColor" stroke-width="1.6"/><circle cx="17.5" cy="17.5" r="1.8" fill="var(--papel, #fff)" stroke="currentColor" stroke-width="1.6"/></symbol>
+    <symbol id="i-telefono" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M11 18.5h2"/></symbol>
+    <symbol id="i-tienda" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M4 9.5 5.5 4h13L20 9.5M4 9.5h16M4 9.5c0 1.5 1.2 2.5 2.7 2.5S9.3 11 9.3 9.5c0 1.5 1.2 2.5 2.7 2.5s2.7-1 2.7-2.5c0 1.5 1.2 2.5 2.6 2.5 1.5 0 2.7-1 2.7-2.5M5.5 12v8h13v-8M10 20v-4.5h4V20"/></symbol>
+  </svg>
+</body>
+</html>
