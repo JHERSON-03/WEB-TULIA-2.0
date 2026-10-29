@@ -6,7 +6,7 @@ Página web de **D'Tulia**, una bodega de Trujillo (La Libertad, Perú) que elab
 
 - **Aviso de edad:** pregunta si el visitante es mayor de 18 años antes de mostrar el sitio.
 - **Nosotros:** la historia de la bodega.
-- **Productos:** el catálogo de vinos, con un filtro por tipo y las presentaciones disponibles.
+- **Catálogo:** vinos, piscos, cremas y macerados de pisco, licores y jarabes, con filtros por categoría. Cada producto muestra la foto del tamaño elegido.
 - **Presentaciones:** Chata, 750 ml, 1 L, 2 L y 4 L, con cuántas unidades trae cada caja.
 - **Personalizados:** vinos con etiqueta propia para eventos.
 - **Cómo pedir:** el pedido por WhatsApp y los precios por caja para negocios.
@@ -20,7 +20,8 @@ HTML, CSS y JavaScript puros. No usa frameworks ni dependencias, y no necesita c
 ## Estructura
 
 ```
-├── index.html          Página principal
+├── index.html          Página principal (con el carrusel del catálogo)
+├── catalogo.html       Catálogo completo, con buscador y filtros
 ├── css/
 │   └── estilos.css     Estilos del sitio
 ├── js/
@@ -30,7 +31,8 @@ HTML, CSS y JavaScript puros. No usa frameworks ni dependencias, y no necesita c
 └── img/
     ├── logo.jpg
     ├── favicon.svg
-    └── productos/      Fotos de las botellas
+    ├── catalogo/       Fotos del catálogo, una por producto y tamaño
+    └── productos/      Fotos recortadas de la portada
 ```
 
 ## Cómo verlo en local
@@ -49,6 +51,9 @@ Casi todo lo que cambia con frecuencia está en [`js/datos.js`](js/datos.js), as
 
 - **`NEGOCIO`:** número de WhatsApp (con código de país, sin `+` ni espacios), mensaje predeterminado, dirección, horario, búsqueda del mapa y redes sociales. Si dejas una red vacía (`""`), no aparece en la página.
 - **`PRESENTACIONES`:** los tamaños de botella y cuántas unidades trae cada caja.
-- **`PRODUCTOS`:** el catálogo. Para agregar un vino, copia un bloque existente y cambia sus valores. Si un precio no está definido, la página muestra "Consultar precio".
+- **`PRODUCTOS`:** el catálogo. Para agregar un producto, copia un bloque existente y cambia sus valores:
+  - `tipo` es la categoría; cada categoría distinta aparece como un botón de filtro.
+  - `fotos` lleva una foto por tamaño, por ejemplo `{ "750 ML": "img/catalogo/x-750.jpg", "4 L": "img/catalogo/x-4l.jpg" }`. Si el producto no tiene tamaños, basta una sola ruta.
+  - `precios` es opcional. Si un precio no está definido, la página muestra "Consultar precio".
 
-Las fotos de los productos van en `img/productos/`, con fondo blanco y encuadre vertical en proporción 2:5.
+Las fotos del catálogo van en `img/catalogo/`, en vertical y en proporción 2:3 (por ejemplo, 480 × 720 px).

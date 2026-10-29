@@ -42,7 +42,9 @@
   --sombra-flotante: 0 24px 54px -10px rgba(43, 10, 16, .2), 0 8px 16px -2px rgba(43, 10, 16, .06);
   --gutter: 48px;
   --ancho: 1320px;
+  --alto-cabecera: 76px;
   --curva: cubic-bezier(.22, .8, .24, 1);
+  --salida: cubic-bezier(.16, 1, .3, 1);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -95,6 +97,16 @@ p { margin: 0; }
 }
 .etiqueta--oro { color: var(--oro-claro); }
 
+/* Solo para lectores de pantalla */
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .pastilla {
   display: inline-flex;
   align-items: center;
@@ -119,6 +131,18 @@ p { margin: 0; }
   background: #25d366;
   box-shadow: 0 0 0 3px rgba(37, 211, 102, .2);
 }
+
+/* Los puntos laten: un anillo del mismo color crece y se desvanece */
+.pastilla__punto, .punto-vivo { position: relative; flex: none; }
+.pastilla__punto::after, .punto-vivo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: latido 2.2s cubic-bezier(0, 0, .2, 1) infinite;
+}
+@keyframes latido { 75%, 100% { transform: scale(2.8); opacity: 0; } }
 
 .logo { border-radius: 50%; object-fit: cover; }
 
@@ -170,8 +194,26 @@ p { margin: 0; }
 .boton--pequeno { min-height: 38px; padding: 0 22px; font-size: .85rem; }
 .boton--ancho { width: 100%; }
 
-.boton--fantasma { background: transparent; border-color: var(--oro); color: var(--texto); }
-.boton--fantasma:hover { background: rgba(184, 137, 59, .08); border-color: var(--oro); box-shadow: none; }
+/* El relleno dorado entra de izquierda a derecha */
+.boton--fantasma {
+  --velo: rgba(184, 137, 59, .16);
+  background: linear-gradient(var(--velo), var(--velo)) left / 0 100% no-repeat;
+  border-color: var(--oro);
+  color: var(--texto);
+  transition: background-size .45s var(--salida), border-color .3s, color .3s, transform .25s var(--curva);
+}
+.boton--fantasma:hover {
+  background: linear-gradient(var(--velo), var(--velo)) left / 100% 100% no-repeat;
+  border-color: var(--bronce);
+  color: var(--vino-profundo);
+  box-shadow: none;
+}
+
+/* Botón con flecha: se eleva y la flecha rebota */
+.boton--flecha:hover { transform: translateY(-2px); box-shadow: 0 0 0 2px var(--oro-claro), 0 14px 28px -10px rgba(118, 28, 43, .55); }
+.boton--flecha:active { transform: translateY(0) scale(.98); }
+.boton--flecha:hover .icono { animation: rebote .9s ease-in-out infinite; }
+@keyframes rebote { 50% { transform: translateY(3px); } }
 
 .boton--bronce { background: var(--bronce); border-color: var(--bronce); color: var(--fondo); }
 .boton--bronce:hover { background: var(--bronce-oscuro); border-color: var(--bronce-oscuro); }
@@ -232,17 +274,41 @@ p { margin: 0; }
 .aviso-edad__nota .icono { width: 14px; height: 14px; color: var(--oro-claro); }
 
 /* --- Cabecera --- */
+/* Arriba de todo la cabecera es transparente; al bajar se vuelve de cristal */
 .cabecera {
   position: fixed;
   inset: 0 0 auto;
   z-index: 50;
+  background: rgba(254, 249, 242, 0);
+  transition: background .4s, box-shadow .4s, backdrop-filter .4s;
+}
+.cabecera--solida {
   background: rgba(254, 249, 242, .85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: box-shadow .3s;
+  box-shadow: 0 4px 18px -2px rgba(74, 16, 25, .06), 0 1px 0 var(--borde);
 }
-.cabecera--solida { box-shadow: 0 4px 18px -2px rgba(74, 16, 25, .06), 0 1px 0 var(--borde); }
-.cabecera__fila { display: flex; align-items: center; gap: 32px; height: 76px; }
+
+/* Línea de progreso de lectura, en el borde superior de la ventana */
+.progreso-lectura {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 60;
+  height: 3px;
+  background: linear-gradient(90deg, var(--vino), var(--oro));
+  transform: scaleX(var(--avance, 0));
+  transform-origin: left;
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* Botón "Volver al inicio" de las páginas internas */
+.cabecera__volver { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.cabecera__volver .icono { width: 16px; height: 16px; transition: transform .3s var(--salida); }
+.cabecera__volver:hover .icono { transform: translate3d(-3px, 0, 0); }
+.menu a[aria-current="page"] { color: var(--vino); }
+.menu a[aria-current="page"]::after { transform: scaleX(1); }
+.cabecera__fila { display: flex; align-items: center; gap: 32px; height: var(--alto-cabecera); }
 .cabecera .marca { margin-right: auto; }
 .cabecera .logo { width: 44px; height: 44px; }
 
@@ -290,42 +356,72 @@ p { margin: 0; }
 .cabecera--abierta .menu-boton span:last-child { transform: translateY(-3.75px) rotate(-45deg); }
 
 /* --- Portada --- */
+/*
+ * La portada entra completa en la primera pantalla: arranca a 20px de la cabecera
+ * y la vitrina toma el alto que queda, sin pasarse del ancho de su columna.
+ */
 .portada {
-  padding: 140px 0 96px;
+  --aire: 20px;
+  --pie: 32px;
+  padding: calc(var(--alto-cabecera) + var(--aire)) 0 var(--pie);
   background: radial-gradient(ellipse at 80% 30%, rgba(184, 137, 59, .1), transparent 55%), var(--fondo);
 }
-.portada__rejilla { display: grid; grid-template-columns: 1.15fr 1fr; align-items: center; gap: 64px; }
+.portada__rejilla {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 64px;
+}
 
+/* Texto arriba, cifras abajo: la línea de las cifras queda alineada con el pie de la vitrina */
+.portada__texto { display: flex; flex-direction: column; align-items: flex-start; }
+.portada .pastilla { margin-bottom: 18px; }
 .portada h1 {
   font-size: clamp(2.4rem, 4.2vw, 3.3rem);
-  line-height: 1.12;
+  line-height: 1.1;
   letter-spacing: -.02em;
 }
-.portada__bajada { max-width: 520px; margin-top: 22px; font-size: 1.05rem; line-height: 1.7; color: var(--suave); }
-.portada__acciones { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+.portada__bajada { max-width: 520px; margin-top: 16px; font-size: 1.05rem; line-height: 1.65; color: var(--suave); }
+.portada__acciones { display: flex; flex-wrap: wrap; gap: 14px; margin: 26px 0 32px; }
 
 .portada__datos {
+  align-self: stretch;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  margin: 40px 0 0;
-  padding: 24px 0 0;
+  margin: auto 0 0;
+  padding: 20px 0 0;
   list-style: none;
   border-top: 1px solid var(--borde);
 }
-.portada__datos li { padding: 0 20px; border-left: 1px solid var(--borde); font-size: .8rem; color: var(--suave); }
+.portada__datos li {
+  padding: 0 20px;
+  border-left: 1px solid var(--borde);
+  font-size: .8rem;
+  color: var(--suave);
+  transition: transform .35s var(--salida);
+}
 .portada__datos li:first-child { padding-left: 0; border-left: 0; }
+.portada__datos li:hover { transform: translateY(-3px); }
 .portada__datos strong {
   display: block;
   margin-bottom: 4px;
   font-family: var(--serif);
   font-size: 1.4rem;
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
   color: var(--vino);
+  transition: color .3s;
 }
+.portada__datos li:hover strong { color: var(--bronce); }
 
 .portada__vitrina {
   position: relative;
+  justify-self: end;
   margin: 0;
+  height: clamp(420px, calc(100vh - var(--alto-cabecera) - var(--aire) - var(--pie)), 760px);
+  height: clamp(420px, calc(100svh - var(--alto-cabecera) - var(--aire) - var(--pie)), 760px);
+  /* 100cqw es el ancho de la rejilla: la columna derecha es 1/2.15 de lo que queda sin el espacio */
+  max-height: calc((100cqw - 64px) / 2.15 * 1.25);
   aspect-ratio: 4 / 5;
   border-radius: var(--radio);
   background:
@@ -343,16 +439,26 @@ p { margin: 0; }
   -webkit-mask-composite: source-in;
   mask-image: linear-gradient(to bottom, #000 90%, transparent), linear-gradient(to right, transparent, #000 15%, #000 85%, transparent);
   mask-composite: intersect;
+  transition: translate .9s var(--salida);
 }
-.portada__foto--centro { left: 50%; height: 80%; translate: -50% 0; z-index: 2; animation: flotar 6s ease-in-out infinite; }
-.portada__foto--izq { left: 4%; height: 66%; animation: flotar 7s ease-in-out -2s infinite; }
-.portada__foto--der { right: 4%; height: 66%; animation: flotar 8s ease-in-out -4s infinite; }
+/* --px y --py (de -1 a 1) los pone main.js según el mouse: la botella del frente se mueve más */
+.portada__foto { will-change: transform, translate; }
+.portada__foto--centro {
+  left: 50%;
+  height: 80%;
+  translate: calc(-50% + var(--px, 0) * 14px) calc(var(--py, 0) * 8px);
+  z-index: 2;
+  animation: flotar 6s ease-in-out infinite;
+}
+.portada__foto--izq { left: 4%; height: 66%; translate: calc(var(--px, 0) * 6px) calc(var(--py, 0) * 4px); animation: flotar 7s ease-in-out -2s infinite; }
+.portada__foto--der { right: 4%; height: 66%; translate: calc(var(--px, 0) * 6px) calc(var(--py, 0) * 4px); animation: flotar 8s ease-in-out -4s infinite; }
 
 .portada__leyenda {
   position: absolute;
   left: 0; right: 0; bottom: 0;
   z-index: 3;
-  padding: 48px 28px 22px;
+  /* A la izquierda deja sitio al sello, que se monta sobre la esquina */
+  padding: 48px 24px 22px 100px;
   border-radius: 0 0 var(--radio) var(--radio);
   background: linear-gradient(to top, rgba(43, 10, 16, .82), transparent);
   color: var(--crema);
@@ -377,8 +483,11 @@ p { margin: 0; }
   line-height: 1.1;
   color: var(--vino);
   transform: rotate(-8deg);
+  /* --giro lo pone main.js según el scroll: el sello gira despacio al bajar */
+  rotate: calc(var(--giro, 0) * 1deg);
+  will-change: transform, rotate;
 }
-.sello span { font-size: .55rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--bronce); }
+.sello > span { font-size: .55rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--bronce); }
 .sello strong { font-family: var(--serif); font-size: .8rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
 .sello em { font-family: var(--serif); font-size: 1.6rem; }
 
@@ -386,6 +495,36 @@ p { margin: 0; }
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 }
+
+/*
+ * Entrada: el título emerge de su máscara y se enfoca línea por línea, el resto sube
+ * en cascada, la vitrina se asienta y el sello entra con un rebote elástico.
+ */
+.portada__texto > * { animation: subir .6s var(--salida) both; }
+.portada__texto > :nth-child(3) { animation-delay: .35s; }
+.portada__texto > :nth-child(4) { animation-delay: .45s; }
+.portada__texto > :nth-child(5) { animation-delay: .55s; }
+.portada h1 { animation: none; }
+.portada h1 .linea {
+  display: block;
+  overflow: hidden;
+  /* Holgura para que la máscara no corte la cola de la "p" y la "y" */
+  padding-bottom: .12em;
+  margin-bottom: -.12em;
+}
+.portada h1 .linea > span { display: inline-block; animation: emerger 1.1s cubic-bezier(.22, 1, .36, 1) .1s both; will-change: transform, filter; }
+.portada h1 .linea + .linea > span { animation-delay: .22s; }
+.portada__vitrina { animation: asentar .9s var(--salida) .15s both; }
+.sello { animation: sellar 1.3s cubic-bezier(.34, 1.56, .64, 1) .7s both; }
+
+/* Mientras el aviso de edad está abierto, la portada espera para no animarse a escondidas */
+.sin-scroll .portada,
+.sin-scroll .portada * { animation-play-state: paused; }
+
+@keyframes subir { from { opacity: 0; transform: translate3d(0, 20px, 0); } }
+@keyframes emerger { from { transform: translate3d(0, 100%, 0); filter: blur(8px); } }
+@keyframes asentar { from { opacity: 0; transform: scale(.96); } }
+@keyframes sellar { from { opacity: 0; transform: scale(.6) rotate(-60deg); } }
 
 /* --- Franja --- */
 .franja { overflow: hidden; padding: 16px 0; background: var(--vino); color: var(--crema); }
@@ -457,21 +596,167 @@ p { margin: 0; }
 .nosotros__vitrina .etiqueta { display: block; margin-bottom: 2px; }
 .nosotros__vitrina em { font-family: var(--serif); font-size: 1.3rem; }
 
-/* --- Filtros y catálogo --- */
-.filtros { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 36px; }
+/* --- Cabecera del catálogo: título a la izquierda, botón a la derecha --- */
+.cabeza-catalogo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px 48px;
+  margin-bottom: 36px;
+}
+.cabeza-catalogo > div { max-width: 620px; }
+.cabeza-catalogo h2 { margin-bottom: 12px; }
+.cabeza-catalogo > div > p:last-child { color: var(--suave); }
+
+/* Botón que se llena de vino de izquierda a derecha; la flecha avanza */
+.boton--llenar {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: transparent;
+  color: var(--vino);
+  min-height: 52px;
+  padding: 0 30px;
+  font-size: .95rem;
+}
+.boton--llenar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--vino);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .5s var(--salida);
+}
+.boton--llenar:hover { background: transparent; color: var(--fondo); box-shadow: 0 14px 28px -12px rgba(118, 28, 43, .6); }
+.boton--llenar:hover::before { transform: scaleX(1); }
+.boton--llenar .icono { transition: transform .4s var(--salida); }
+.boton--llenar:hover .icono { transform: translate3d(5px, 0, 0); }
+
+/* --- Filtros: la píldora de color se desliza hasta la categoría elegida --- */
+.filtros { position: relative; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
 .filtros[hidden] { display: none; }
 .filtros button {
+  position: relative;
+  z-index: 1;
   min-height: 38px;
   padding: 0 20px;
   border: 1px solid var(--borde);
   border-radius: 999px;
   background: var(--papel);
+  color: var(--texto);
   font: 600 .85rem var(--sans);
   cursor: pointer;
+  transition: color .35s, border-color .35s, background .35s;
 }
-.filtros button[aria-selected="true"] { background: var(--vino); border-color: var(--vino); color: var(--blanco); }
+.filtros button:hover { border-color: var(--oro); }
+.filtros button[aria-selected="true"] { background: transparent; border-color: transparent; color: var(--blanco); }
+.filtros__indicador {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 999px;
+  background: var(--vino);
+  box-shadow: 0 8px 18px -8px rgba(118, 28, 43, .6);
+  transition: transform .5s var(--salida), width .5s var(--salida), height .5s var(--salida);
+  will-change: transform, width;
+  pointer-events: none;
+}
+/* Sin JS de indicador (antes de medir), el botón activo se pinta solo */
+.filtros:not(.filtros--medidos) button[aria-selected="true"] { background: var(--vino); }
 
 .catalogo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+
+/* --- Carrusel de una fila: se desliza con el dedo de forma nativa (scroll + snap) --- */
+.carrusel { position: relative; }
+.catalogo--carrusel {
+  --visibles: 4;
+  display: flex;
+  gap: 24px;
+  /* Aire arriba y abajo para que la elevación y la sombra del hover no se corten */
+  margin: -14px 0;
+  padding: 14px 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.catalogo--carrusel::-webkit-scrollbar { display: none; }
+.catalogo--carrusel > .tarjeta { flex: 0 0 calc((100% - (var(--visibles) - 1) * 24px) / var(--visibles)); scroll-snap-align: start; }
+.catalogo--arrastrando { scroll-snap-type: none; cursor: grabbing; user-select: none; }
+.catalogo--arrastrando .tarjeta { pointer-events: none; }
+
+.carrusel__controles { display: flex; align-items: center; gap: 20px; margin-top: 32px; }
+.carrusel__barra { position: relative; flex: 1; height: 2px; overflow: hidden; border-radius: 2px; background: var(--borde); }
+.carrusel__avance {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--ancho-avance, 25%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--vino), var(--oro));
+  transform: translate3d(var(--paso-avance, 0%), 0, 0);
+  transition: transform .45s var(--salida), width .45s var(--salida);
+  will-change: transform;
+}
+.carrusel__flechas { display: flex; gap: 10px; }
+.carrusel__flecha {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--oro);
+  border-radius: 50%;
+  background: var(--papel);
+  color: var(--vino);
+  cursor: pointer;
+  transition: background .3s, color .3s, border-color .3s, transform .2s var(--salida), opacity .3s;
+}
+.carrusel__flecha:hover { background: var(--vino); border-color: var(--vino); color: var(--fondo); }
+.carrusel__flecha:active { transform: scale(.9); }
+.carrusel__flecha:disabled { opacity: .35; cursor: default; background: var(--papel); border-color: var(--borde); color: var(--tenue); }
+.carrusel__flecha .icono { width: 20px; height: 20px; }
+
+/* Al cambiar de categoría las tarjetas salen y vuelven a entrar */
+.catalogo--saliendo > .tarjeta { opacity: 0; transform: translate3d(0, 12px, 0) scale(.96); transition: opacity .25s, transform .25s var(--curva); }
+.tarjeta--entrando { animation: entrar-tarjeta .55s var(--salida) both; animation-delay: calc(var(--orden, 0) * 70ms); }
+@keyframes entrar-tarjeta { from { opacity: 0; transform: translate3d(0, 16px, 0) scale(.96); } }
+
+/* --- Página de catálogo completo --- */
+.pagina-catalogo { padding: calc(var(--alto-cabecera) + 48px) 0 112px; }
+.pagina-catalogo h1 { font-size: clamp(2.4rem, 4.6vw, 3.6rem); margin-bottom: 14px; }
+.pagina-catalogo__intro { max-width: 620px; margin-bottom: 36px; color: var(--suave); }
+.herramientas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-bottom: 24px;
+}
+.buscador { position: relative; flex: 1 1 340px; max-width: 460px; }
+.buscador .icono { position: absolute; left: 18px; top: 50%; translate: 0 -50%; color: var(--tenue); pointer-events: none; }
+.buscador input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 20px 0 48px;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: var(--papel);
+  color: var(--texto);
+  font: 500 .95rem var(--sans);
+  transition: border-color .3s, box-shadow .3s;
+}
+.buscador input::placeholder { color: var(--tenue); }
+.buscador input:focus { outline: none; border-color: var(--oro); box-shadow: 0 0 0 4px rgba(184, 137, 59, .15); }
+.contador { font-size: .9rem; color: var(--suave); }
+.contador strong { font-family: var(--serif); font-size: 1.25rem; font-weight: 500; color: var(--vino); }
+.sin-resultados { padding: 64px 20px; text-align: center; color: var(--suave); }
+.sin-resultados[hidden] { display: none; }
+.sin-resultados h2 { margin-bottom: 10px; font-size: 1.8rem; color: var(--vino-profundo); }
+.sin-resultados .boton { margin-top: 20px; }
 
 .tarjeta {
   --acento: var(--vino);
@@ -482,10 +767,15 @@ p { margin: 0; }
   border-radius: var(--radio);
   background: color-mix(in srgb, var(--acento) 5%, var(--papel));
   box-shadow: var(--sombra);
-  transition: transform .4s var(--curva), box-shadow .4s var(--curva);
+  transition: transform .6s var(--salida), box-shadow .6s var(--salida), border-color .6s;
 }
 .tarjeta[hidden] { display: none; }
-.tarjeta:hover { transform: translateY(-4px); box-shadow: var(--sombra-alta); }
+/* Hover: se eleva, el borde se ilumina en dorado y la botella se acerca despacio */
+.tarjeta:hover {
+  transform: translate3d(0, -8px, 0);
+  border-color: color-mix(in srgb, var(--oro) 70%, var(--acento));
+  box-shadow: 0 0 0 1px rgba(184, 137, 59, .35), 0 22px 44px -16px rgba(74, 16, 25, .3), 0 0 32px -8px rgba(184, 137, 59, .35);
+}
 
 .tarjeta__escena {
   position: relative;
@@ -513,17 +803,39 @@ p { margin: 0; }
   text-transform: uppercase;
   color: var(--vino-profundo);
 }
-.tarjeta__foto {
-  height: 250px;
-  width: auto;
-  mix-blend-mode: multiply;
-  -webkit-mask-image: linear-gradient(to bottom, #000 90%, transparent), linear-gradient(to right, transparent, #000 15%, #000 85%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to bottom, #000 90%, transparent), linear-gradient(to right, transparent, #000 15%, #000 85%, transparent);
-  mask-composite: intersect;
-  transition: transform .5s var(--curva);
+/* Foto completa de la botella; a los lados, la misma foto desenfocada rellena el espacio */
+.tarjeta__escena--foto { place-items: stretch center; height: 380px; padding: 0; }
+.tarjeta__escena--foto::before {
+  content: "";
+  position: absolute;
+  inset: -24px;
+  background: var(--foto, none) center / cover;
+  filter: blur(22px);
+  opacity: .85;
 }
-.tarjeta:hover .tarjeta__foto { transform: translateY(-6px) scale(1.03); }
+.tarjeta__foto {
+  position: relative;
+  height: 100%;
+  width: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  transition: opacity .16s, transform 1.4s var(--salida);
+}
+.tarjeta__escena--cambiando .tarjeta__foto { opacity: 0; }
+.tarjeta:hover .tarjeta__foto { transform: scale(1.07); }
+/* Destello diagonal que cruza la foto al pasar el mouse */
+.tarjeta__escena::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 250, 240, .5) 50%, transparent 65%);
+  transform: translate3d(-110%, 0, 0);
+  pointer-events: none;
+}
+.tarjeta:hover .tarjeta__escena::after { transform: translate3d(110%, 0, 0); transition: transform 1s var(--salida); }
 
 .tarjeta__botella { width: 100px; transition: opacity .16s, transform .3s var(--curva); }
 .tarjeta__botella--cambiando { opacity: 0; transform: translateY(8px) scale(.96); }
@@ -556,6 +868,17 @@ p { margin: 0; }
 }
 .tarjeta__tamanos button:hover { border-color: var(--acento); }
 .tarjeta__tamanos button[aria-checked="true"] { background: var(--acento); border-color: var(--acento); color: var(--sobre-acento); }
+.tarjeta__unica {
+  justify-self: start;
+  display: grid;
+  place-items: center;
+  min-height: 30px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--acento);
+  color: var(--sobre-acento);
+  font: 600 .75rem var(--sans);
+}
 
 .tarjeta__pie {
   display: flex;
@@ -873,14 +1196,39 @@ p { margin: 0; }
 .whatsapp-flotante:hover .whatsapp-flotante__boton { transform: scale(1.08); }
 .whatsapp-flotante__boton svg { width: 30px; height: 30px; }
 
-/* --- Aparición al hacer scroll --- */
-.revelar { opacity: 0; transform: translateY(24px); transition: opacity .8s var(--curva), transform .8s var(--curva); }
-.revelar--visible { opacity: 1; transform: none; }
+/*
+ * --- Aparición al hacer scroll ---
+ * .revelar           títulos y bloques: suben y pasan de borrosos a nítidos
+ * .revelar--tarjeta  tarjetas y pasos: crecen desde 0.94, en cascada (main.js pone --retraso)
+ * .revelar--imagen   la máscara se abre y la foto se aleja de 1.12 a 1
+ * Al terminar, main.js quita estas clases y cada elemento recupera sus propias transiciones.
+ */
+.revelar {
+  opacity: 0;
+  transform: translate3d(0, 40px, 0);
+  filter: blur(6px);
+  transition: opacity .8s var(--salida), transform .8s var(--salida), filter .8s var(--salida);
+  transition-delay: var(--retraso, 0s);
+  will-change: transform, opacity;
+}
+.revelar--tarjeta { transform: translate3d(0, 28px, 0) scale(.94); filter: none; }
+.revelar--imagen {
+  transform: none;
+  filter: none;
+  clip-path: inset(14% 10% 14% 10% round var(--radio));
+  transition: opacity .9s var(--salida), clip-path 1.3s var(--salida);
+  transition-delay: var(--retraso, 0s);
+}
+.revelar--imagen img { transform: scale(1.12); transition: transform 1.8s var(--salida); }
+.revelar--visible { opacity: 1; transform: none; filter: none; }
+.revelar--imagen.revelar--visible { clip-path: inset(0 0 0 0 round var(--radio)); }
+.revelar--imagen.revelar--visible img { transform: none; }
 
 /* --- Responsive --- */
 @media (max-width: 1180px) {
   :root { --gutter: 32px; }
   .catalogo { grid-template-columns: repeat(2, 1fr); }
+  .catalogo--carrusel { --visibles: 2; }
   .presentaciones { grid-template-columns: repeat(3, 1fr); }
 }
 
@@ -888,8 +1236,11 @@ p { margin: 0; }
   .portada__rejilla, .nosotros, .donde, .cabeza-partida, .personalizadas { grid-template-columns: 1fr; }
   .personalizadas { gap: 40px; }
   .personalizadas__foto { max-width: 440px; width: 100%; margin: 0 auto; }
-  .portada__vitrina { max-width: 480px; width: 100%; margin: 0 auto; }
+  /* En una columna la vitrina vuelve a medirse por su ancho */
+  .portada { --pie: 64px; }
+  .portada__vitrina { justify-self: center; width: 100%; max-width: 480px; height: auto; max-height: none; }
   .sello { left: -12px; }
+  .portada__leyenda { padding-left: 116px; }
   .pasos { grid-template-columns: 1fr; }
   .mayoristas { flex-wrap: wrap; }
   .nosotros__vitrina { min-height: 380px; }
@@ -898,12 +1249,28 @@ p { margin: 0; }
 @media (max-width: 760px) {
   :root { --gutter: 20px; }
   .seccion { padding: 80px 0; }
-  .portada { padding: 112px 0 64px; }
+  .portada { --pie: 56px; }
   .portada__datos li { padding: 0 10px; font-size: .75rem; }
   .portada__datos strong { font-size: 1.12rem; white-space: nowrap; }
   .cabecera__cta { display: none; }
 
   .catalogo { grid-template-columns: 1fr; }
+  /* En celular se asoma la siguiente tarjeta para invitar a deslizar */
+  .catalogo--carrusel { gap: 16px; }
+  .catalogo--carrusel > .tarjeta { flex-basis: 86%; }
+  .carrusel__flechas { display: none; }
+  .cabeza-catalogo .boton { width: 100%; }
+  /* Las categorías van en una sola fila que se desliza con el dedo, de borde a borde */
+  .filtros {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 2px var(--gutter);
+    scrollbar-width: none;
+  }
+  .filtros::-webkit-scrollbar { display: none; }
+  .filtros button { flex: none; }
+  .cabecera__volver .cabecera__volver-largo { display: none; }
   .presentaciones { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .aviso-edad__botones { grid-template-columns: 1fr; }
   .mayoristas { padding: 24px; }
@@ -917,7 +1284,7 @@ p { margin: 0; }
   .cabecera__fila { gap: 16px; }
   .menu {
     position: absolute;
-    top: 76px;
+    top: var(--alto-cabecera);
     left: 0;
     right: 0;
     flex-direction: column;
@@ -939,5 +1306,6 @@ p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  .revelar { opacity: 1; transform: none; }
+  .revelar, .revelar img { opacity: 1; transform: none; filter: none; clip-path: none; }
+  .sello { rotate: none; }
 }
